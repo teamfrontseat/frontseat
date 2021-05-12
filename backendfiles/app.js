@@ -62,7 +62,7 @@ app.ws('/', function (ws, req) {
     clients.push(ws);
 
     // Add Jane Doe to mojo clients map
-    let viveClient = createMojoClient(player.mojoPort, "localhost");
+    let viveClient = createMojoClient(player.mojoPort, player.mojoIpAddress);
     mojoClientsMap.set(player.id, viveClient);
     
     ws.on('message', function(msgStr) {
