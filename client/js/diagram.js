@@ -110,12 +110,32 @@ export default class Diagram {
 	 */
 	addUnclassifiedEntity(...objects) {
 		for(const o of objects) {
+			var entity;
 			if(!o.id) { //If it doesn't have an ID, give it one.
 				o.id = uniqueID();
 			}
-			let e = new entityClassMap[o.class](o);
-			this.updateEntityPosition(e);
-			this.entities.push(e);
+			if (o.class) {
+				entity = new entityClassMap[o.class](o);
+			} else {
+				entity = new entityClassMap[o["0"].class](o);
+			}
+			this.updateEntityPosition(entity);
+			this.entities.push(entity);
+		}
+	}
+
+	/**
+	 * Wraps one or more entity objects in relevant class and removes them from
+	 * the diagram.
+	 * @param  {...any} objects entity data objects to be removed
+	 */
+	removeEntity(...objects) {
+		for (const o of objects) {
+			for (var i = 0; i < this.entities.length; i++) {
+				if (this.entities[i].id == o.id) {
+					this.entities.splice(i);
+				}
+			}
 		}
 	}
 
@@ -172,7 +192,12 @@ export default class Diagram {
 		if(ent.moved) {
 			this.updateEntityPosition(ent);
 		}
-		EntityDraw[ent.data.drawType](ent, this.ctx);
+		if (ent.data.drawType){
+			EntityDraw[ent.data.drawType](ent, this.ctx);
+		} else {
+			EntityDraw[ent.data["0"].drawType](ent, this.ctx);
+		}
+				
 	}
 
 	drawEntities() {
